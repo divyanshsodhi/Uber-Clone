@@ -266,3 +266,145 @@ Endpoint to register a new captain (driver) in the system.
     }
 }
 ```
+
+
+# Captain API Documentation
+
+## 1. Register Captain
+Endpoint to register a new captain (driver).
+
+### POST /captains/register
+- **Content-Type**: `application/json`
+
+### Request Body
+```json
+{
+    "fullname": {
+        "firstname": "string", // required, min 3 characters
+        "lastname": "string"   // optional, min 3 characters if provided
+    },
+    "email": "string",        // required, unique, valid email format
+    "password": "string",     // required, min 6 characters
+    "vehicle": {
+        "color": "string",    // required, min 3 characters
+        "plate": "string",    // required, min 3 characters
+        "capacity": 4,        // required, min 1
+        "vehicleType": "car"  // required, enum: ['car', 'motorcycle', 'auto']
+    }
+}
+```
+
+### Success Response - 201 Created
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", // JWT token
+    "captain": {
+        "_id": "65f7d3a12f48e123456789ab",
+        "fullname": {
+            "firstname": "string",
+            "lastname": "string"
+        },
+        "email": "string",
+        "status": "inactive", // default status
+        "vehicle": {
+            "color": "string",
+            "plate": "string",
+            "capacity": 1,
+            "vehicleType": "car"
+        },
+        "socketId": null,     // used for real-time updates
+        "location": {         // captain's current location
+            "lat": null,
+            "lng": null
+        }
+    }
+}
+```
+
+## 2. Login Captain
+Authenticate existing captain.
+
+### POST /captains/login
+- **Content-Type**: `application/json`
+
+### Request Body
+```json
+{
+    "email": "string",    // required, valid email
+    "password": "string"  // required, min 6 characters
+}
+```
+
+### Success Response - 200 OK
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "captain": {
+        "_id": "65f7d3a12f48e123456789ab",
+        "fullname": {
+            "firstname": "string",
+            "lastname": "string"
+        },
+        "email": "string",
+        "status": "inactive",
+        "vehicle": {
+            "color": "string",
+            "plate": "string",
+            "capacity": 1,
+            "vehicleType": "car"
+        },
+        "socketId": null,
+        "location": {
+            "lat": null,
+            "lng": null
+        }
+    }
+}
+```
+
+## 3. Get Captain Profile
+Get authenticated captain's profile.
+
+### GET /captains/profile
+- **Headers**: 
+  - `Authorization`: Bearer <token>
+
+### Success Response - 200 OK
+```json
+{
+    "captain": {
+        "_id": "65f7d3a12f48e123456789ab",
+        "fullname": {
+            "firstname": "string",
+            "lastname": "string"
+        },
+        "email": "string",
+        "status": "inactive",
+        "vehicle": {
+            "color": "string",
+            "plate": "string",
+            "capacity": 1,
+            "vehicleType": "car"
+        },
+        "socketId": null,
+        "location": {
+            "lat": null,
+            "lng": null
+        }
+    }
+}
+```
+
+## 4. Logout Captain
+Logout and invalidate current token.
+
+### GET /captains/logout
+- **Headers**: 
+  - `Authorization`: Bearer <token>
+
+### Success Response - 200 OK
+```json
+{
+    "message": "Logged Out Successfully"
+}
+```
